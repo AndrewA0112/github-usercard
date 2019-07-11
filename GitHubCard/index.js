@@ -4,16 +4,25 @@
 */
 const cards = document.querySelector('.cards')
 
-const profilePromise = axios.get('https://api.github.com/users/AndrewA0112')
-profilePromise
-  .then(data => {
-    cards.appendChild(createCard(data.data))
-  })
+const profileSearchButton = document.querySelector('#search')
+const profileSearchInput = document.querySelector('#profile')
 
-  .catch(error => {
-    console.log('Error connecting to API', error)
-  })
+profileSearchButton.addEventListener('click', () => searchProfile(profileSearchInput.value))
 
+function getProfile(profileUrl) {
+  const profilePromise = axios.get(`https://api.github.com/users/${profileUrl}`)
+  profilePromise
+    .then(data => {
+      console.log(data.data)
+      cards.appendChild(createCard(data.data))
+    })
+
+    .catch(error => {
+      console.log('Error connecting to API', error)
+    })
+
+    getFollowers(profileUrl)
+}
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -35,28 +44,32 @@ profilePromise
           Using that array, iterate over it, requesting data for each user, creating a new card for each
           user, and adding that card to the DOM.
 */
-const followersPromise = axios.get('https://api.github.com/users/AndrewA0112/followers')
-followersPromise
-  .then(data => {
-    // console.log(data.data)
-    const profiles = data.data
-    profiles.forEach(profile => {
-      console.log(profile)
-      const profilePromise = axios.get(profile.url)
-      profilePromise
-        .then(data => {
-          cards.appendChild(createCard(data.data))
-        })
 
-        .catch(error => {
-          console.log('Error connecting to API', error)
-        })
+function getFollowers(profileUrl) {
+  const followersPromise = axios.get(`https://api.github.com/users/${profileUrl}/followers`)
+  followersPromise
+    .then(data => {
+      // console.log(data.data)
+      const profiles = data.data
+      profiles.forEach(profile => {
+        // console.log(profile)
+        const profilePromise = axios.get(profile.url)
+        profilePromise
+          .then(data => {
+            cards.appendChild(createCard(data.data))
+          })
+
+          .catch(error => {
+            console.log('Error connecting to API', error.response)
+          })
+      })
     })
-  })
 
-  .catch(error => {
-    console.log('Error connecting to API', error)
-  })
+    .catch(error => {
+
+      console.log('Error connecting to API', error)
+    })
+}
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -121,6 +134,21 @@ function createCard(obj) {
   cardProfile.appendChild(cardProfileLink)
 
   return card
+}
+
+function searchProfile(profileName) {
+  while(cards.firstChild){
+    cards.removeChild(cards.firstChild);
+  }
+
+  if(profileName === '') {
+    getProfile('AndrewA0112');
+    console.log('Default profile loaded', profileName)
+  }
+  else {
+    getProfile(profileName);
+    console.log('Profile Searched!', profileName)
+  }
 }
 
 /* List of LS Instructors Github username's: 
