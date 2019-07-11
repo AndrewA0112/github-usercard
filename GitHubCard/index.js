@@ -100,7 +100,8 @@ function createCard(obj) {
   cardName.textContent = obj.name
   cardUsername.textContent = obj.login
   cardLocation.textContent = obj.location
-  cardProfile.textContent = `Profile: ${obj.html_url}`
+  cardProfile.textContent = `Profile: `
+  cardProfileLink.textContent = obj.html_url
   cardProfileLink.href = obj.html_url
   cardFollowers.textContent = obj.followers
   cardFollowing.textContent = obj.following
