@@ -87,6 +87,10 @@ body {
   font-size: 48px;
 }
 
+.profile-search {
+  margin: 40px;
+}
+
 .cards {
   width: 100%;
 }
